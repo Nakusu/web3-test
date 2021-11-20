@@ -1,21 +1,14 @@
 <template>
   <div class="content-home">
     <div v-if="!client" class="block">
-      <h1>You have accept my lord !</h1>
+      <h1>You have accept mister fox !</h1>
     </div>
     <div v-if="client != null" class="block">
-        <h1>Welcome my lord !</h1>
-        <p>Your adress : {{ adress }}</p>
+      <h1>Welcome my fox !</h1>
+      <p>Your adress : {{ adress }}</p>
     </div>
   </div>
 </template>
-
-<style>
-    html {
-        background-color: black;
-        color: white;
-    }
-</style>
 
 <script>
 const Web3 = require("web3");
@@ -28,28 +21,31 @@ export default {
       adress: null,
     };
   },
+  head() {
+      return {
+          title: "Home page",
+      };
+  },
+  computed: {
+    async getAccess() {
+      if (window && window.ethereum) {
+        try {
+          await window.ethereum.enable();
+          this.client = new Web3(web3.currentProvider);
+          this.adress = this.client.currentProvider.selectedAddress;
+          this.network = this.currentProvider.network;
+        } catch (error) {}
+      }
+    },
+  },
   methods: {
     async getBlockNumber() {
       const latestBlockNumber = await this.web3.eth.getBlockNumber();
       console.log(latestBlockNumber);
     },
-    async getAccess() {
-      if (window.ethereum != null) {
-        if (window.web3) {
-          this.client = new Web3(web3.currentProvider);
-          this.adress = this.client.currentProvider.selectedAddress;
-          this.network = this.currentProvider.network;
-          return;
-        }
-        try {
-          await window.ethereum.enable();
-          this.client = new Web3(window.ethereum);
-        } catch (error) {}
-      }
-    },
   },
   async mounted() {
-    this.getAccess();
+    this.getAccess;
   },
 };
 </script>
