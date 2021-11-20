@@ -1,0 +1,9 @@
+[
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/home/srv/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_42fabee0"
+  }
+]
