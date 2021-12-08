@@ -1,6 +1,6 @@
 export default {
     head: {
-        titleTemplate: '%s - Nuxt',
+        titleTemplate: '%s - FoxWebsite',
     },
     css: [
         './assets/css/main.scss',

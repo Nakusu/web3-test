@@ -6,8 +6,25 @@ html, body {
     display: block;
     box-sizing: border-box;
     background-color: #191a1c;
+    color: white;
 }
 div {
+    display: block;
+    box-sizing: border-box;
+}
+header {
+    height: 65px;
+    width: 100%;
+    overflow: hidden;
+    background-color: #bdbdbd;
+    border-bottom: solid #818181 2px
+}
+
+main {
+    height: min-content;
+    width: 100%;
+    overflow: hidden;
+    padding: 25px;
     display: block;
     box-sizing: border-box;
 }
