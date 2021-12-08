@@ -6,7 +6,8 @@
     <div v-if="client != null" class="block">
       <h1>Welcome my fox !</h1>
       <p>Your adress : {{ adress }}</p>
-      <p>Network : {{ network }}</p>
+      <p v-if="getNetwork != 56">Wrong network selected !</p>
+      <p v-else>Network : Binance smart Chain</p>
     </div>
   </div>
 </template>
@@ -20,7 +21,6 @@ export default {
       web3: new Web3("https://bsc-dataseed1.binance.org"),
       client: null,
       adress: null,
-      network: null,
     };
   },
   head() {
@@ -29,22 +29,26 @@ export default {
     };
   },
   computed: {
-    async getAccess() {
-      if (window && window.ethereum) {
-        try {
-          await window.ethereum.enable();
-          this.client = new Web3(web3.currentProvider);
-          this.adress = this.client.currentProvider.selectedAddress;
-          if (window.ethereum.networkVersion != 56)
-            this.changeNetwork();
-        } catch (error) {}
-      }
+    getNetwork() {
+      let ret = -1;
+      if (window && window.ethereum) ret = window.ethereum.networkVersion;
+      return ret;
     },
   },
   methods: {
     async getBlockNumber() {
       const latestBlockNumber = await this.web3.eth.getBlockNumber();
       console.log(latestBlockNumber);
+    },
+    async getAccess() {
+      if (window && window.ethereum) {
+        try {
+          await window.ethereum.enable();
+          this.client = new Web3(web3.currentProvider);
+          this.adress = this.client.currentProvider.selectedAddress;
+          if (window.ethereum.networkVersion != 56) this.changeNetwork();
+        } catch (error) {}
+      }
     },
     async changeNetwork() {
       if (window.ethereum) {
@@ -59,7 +63,13 @@ export default {
             try {
               await ethereum.request({
                 method: "wallet_addEthereumChain",
-                params: [{ chainId: "0x38", name: "Binance Smart chain", rpcUrl: "https://bsc-dataseed.binance.org/" /* ... */ }],
+                params: [
+                  {
+                    chainId: "0x38",
+                    name: "Binance Smart chain",
+                    rpcUrl: "https://bsc-dataseed.binance.org/" /* ... */,
+                  },
+                ],
               });
             } catch (addError) {
               // handle "add" error
@@ -71,10 +81,19 @@ export default {
     },
   },
   async mounted() {
-    this.getAccess;
+    this.getAccess();
     window.ethereum.on("networkChanged", (networkId) => {
-      console.log("networkChanged", networkId);
       this.changeNetwork();
+    });
+    window.ethereum.on("accountsChanged", (accounts) => {
+      console.log(accounts);
+      if (accounts.length > 0) {
+        this.client = new Web3(web3.currentProvider);
+        this.adress = this.client.currentProvider.selectedAddress;
+        return;
+      }
+      this.adress, (this.client = null);
+      this.getAccess();
     });
   },
 };
